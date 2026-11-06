@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f58220">
 <link rel="icon" href="data:,">
-<title>Wer drückt auf Senden?</title>
+<title>Deine KI will loslegen. Lässt du sie?</title>
 <script>
   /* Auf dem eigenen Server: { api: "/api", contactUrl: "/kontakt" }.
      Auf claude.ai: contactUrl = volle Adresse des Kontaktformulars auf dem Hetzner-Server. */
@@ -163,6 +163,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 900; margin: 0; text
 .intro .kaibig svg { width: 96px; height: 96px; }
 .intro h1 { font-size: 2em; line-height: 1.05; }
 .intro h1 mark { background: var(--orange); color: #fff; padding: 0 .12em; border-radius: 6px; }
+h1 .ha { display: block; font-size: .58em; line-height: 1.15; margin-bottom: .18em; }
+h1 mark { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .intro p { margin: 0; color: var(--muted); }
 .intro .frame { background: #fff1e6; border-left: 5px solid var(--orange); border-radius: 10px; padding: 10px 12px; text-align: left; color: var(--ink); font-size: .92em; }
 .intro .start { background: var(--orange); color: var(--ink); border: none; border-radius: 16px; padding: 14px; font-weight: 900; font-size: 1.2em; min-height: 56px; }
@@ -3057,7 +3059,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
 
 </script>
 <script>
-/* „Wer drückt auf Senden?“ V2 – Chat mit Kai. Mobil zuerst, Laptop im Telefonrahmen. */
+/* „Deine KI will loslegen. Lässt du sie?“ V2 – Chat mit Kai. Mobil zuerst, Laptop im Telefonrahmen. */
 (function () {
   "use strict";
   const G = window.GAME;
@@ -3071,8 +3073,8 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   try { const l = localStorage.getItem("bsw-lang"); if (l === "de" || l === "en") lang = l; } catch (e) {}
 
   const UI = {
-    title: { de: "Wer drückt auf Senden?", en: "Who presses send?" },
-    heroA: { de: "Wer drückt auf ", en: "Who presses " }, heroB: { de: "Senden?", en: "send?" },
+    title: { de: "Deine KI will loslegen. Lässt du sie?", en: "Your AI wants to act. Will you let it?" },
+    heroA: { de: "Deine KI will loslegen. ", en: "Your AI wants to act. " }, heroB: { de: "Lässt du sie?", en: "Will you let it?" },
     poster: { de: "Spiel mit Kai, deiner neuen KI, und entscheide, was sie allein darf.", en: "Play with Kai, your new AI, and decide what it may do on its own." },
     posterSmall: { de: "Ein Forschungsspiel von KI-InnoX · IFAF Berlin · HWR · HTW · ASH", en: "A research game by KI-InnoX · IFAF Berlin · HWR · HTW · ASH" },
     stats: { de: "Live-Statistik", en: "Live statistics" },
@@ -3305,7 +3307,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
       <aside class="poster">
         <div class="logo">${window.IFAF_LOGO || ""}</div>
         <div class="kaibig">${kaiSvg("smug")}</div>
-        <h1>${T(UI.heroA)}<mark>${T(UI.heroB)}</mark></h1>
+        <h1><span class="ha">${T(UI.heroA)}</span><mark>${T(UI.heroB)}</mark></h1>
         <p>${T(UI.poster)}</p>
         <small>${T(UI.posterSmall)}</small>
         <a href="#statistik">${T(UI.stats)} →</a>
@@ -3325,7 +3327,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     return `<section class="intro">
       <div class="logo">${window.IFAF_LOGO || "IFAF Berlin"}</div>
       <div class="kaibig">${kaiSvg("smug")}</div>
-      <h1>${T(UI.heroA)}<mark>${T(UI.heroB)}</mark></h1>
+      <h1><span class="ha">${T(UI.heroA)}</span><mark>${T(UI.heroB)}</mark></h1>
       <p>${T(UI.introText)}</p>
       <div class="frame">${t(UI.introFrame)}</div>
       <p>${T(UI.introMeta)}</p>

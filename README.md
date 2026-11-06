@@ -1,4 +1,4 @@
-# KI-InnoX · „Wer drückt auf Senden?“
+# KI-InnoX · „Deine KI will loslegen. Lässt du sie?“
 
 Forschungsspiel des Projekts KI-InnoX (IFAF Berlin mit HWR, HTW und ASH Berlin) für die Berlin Science Week 2026.
 

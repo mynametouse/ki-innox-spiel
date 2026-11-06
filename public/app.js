@@ -1,4 +1,4 @@
-/* „Wer drückt auf Senden?“ V2 – Chat mit Kai. Mobil zuerst, Laptop im Telefonrahmen. */
+/* „Deine KI will loslegen. Lässt du sie?“ V2 – Chat mit Kai. Mobil zuerst, Laptop im Telefonrahmen. */
 (function () {
   "use strict";
   const G = window.GAME;
@@ -12,8 +12,8 @@
   try { const l = localStorage.getItem("bsw-lang"); if (l === "de" || l === "en") lang = l; } catch (e) {}
 
   const UI = {
-    title: { de: "Wer drückt auf Senden?", en: "Who presses send?" },
-    heroA: { de: "Wer drückt auf ", en: "Who presses " }, heroB: { de: "Senden?", en: "send?" },
+    title: { de: "Deine KI will loslegen. Lässt du sie?", en: "Your AI wants to act. Will you let it?" },
+    heroA: { de: "Deine KI will loslegen. ", en: "Your AI wants to act. " }, heroB: { de: "Lässt du sie?", en: "Will you let it?" },
     poster: { de: "Spiel mit Kai, deiner neuen KI, und entscheide, was sie allein darf.", en: "Play with Kai, your new AI, and decide what it may do on its own." },
     posterSmall: { de: "Ein Forschungsspiel von KI-InnoX · IFAF Berlin · HWR · HTW · ASH", en: "A research game by KI-InnoX · IFAF Berlin · HWR · HTW · ASH" },
     stats: { de: "Live-Statistik", en: "Live statistics" },
@@ -229,7 +229,7 @@
       <aside class="poster">
         <div class="logo">${window.IFAF_LOGO || ""}</div>
         <div class="kaibig">${kaiSvg("smug")}</div>
-        <h1>${T(UI.heroA)}<mark>${T(UI.heroB)}</mark></h1>
+        <h1><span class="ha">${T(UI.heroA)}</span><mark>${T(UI.heroB)}</mark></h1>
         <p>${T(UI.poster)}</p>
         <small>${T(UI.posterSmall)}</small>
         <a href="#statistik">${T(UI.stats)} →</a>
@@ -249,7 +249,7 @@
     return `<section class="intro">
       <div class="logo">${window.IFAF_LOGO || "IFAF Berlin"}</div>
       <div class="kaibig">${kaiSvg("smug")}</div>
-      <h1>${T(UI.heroA)}<mark>${T(UI.heroB)}</mark></h1>
+      <h1><span class="ha">${T(UI.heroA)}</span><mark>${T(UI.heroB)}</mark></h1>
       <p>${T(UI.introText)}</p>
       <div class="frame">${t(UI.introFrame)}</div>
       <p>${T(UI.introMeta)}</p>
