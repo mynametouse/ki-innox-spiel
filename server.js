@@ -1,6 +1,6 @@
 /* KI-InnoX · „Wer drückt auf Senden?“ – kleiner Server für Spiel, anonyme Spieldaten und getrennte Kontaktliste.
    Keine Fremdbibliotheken. Node 18+.
-   - Spieldaten:   PUT /api/plays/:id  → data/plays/<id>.json   (anonym)
+   - Spieldaten:   PUT /api/plays/:id  → data/plays/<id>.json   (anonym; CORS für ALLOW_ORIGINS)
                    GET /api/plays      → alle Runden als Liste (für die Live-Statistik)
    - Kontakte:     POST /api/contacts  → data/contacts.jsonl    (nur Datum, keine Uhrzeit, keine IP, keine Spiel-ID)
    - Seiten:       /  (Spiel), /kontakt (Kontaktformular), /#statistik (Live-Statistik)
@@ -95,9 +95,26 @@ function serveStatic(req, res, pathname) {
   });
 }
 
+/* Spiel-Seiten auf anderen Adressen (z. B. apps.lab.reallabore.berlin) dürfen anonyme Runden senden und lesen */
+const ALLOW_ORIGINS = (process.env.ALLOW_ORIGINS || "https://apps.lab.reallabore.berlin").split(",").map(s => s.trim()).filter(Boolean);
+function cors(req, res) {
+  const o = req.headers.origin;
+  if (o && ALLOW_ORIGINS.includes(o)) {
+    res.setHeader("Access-Control-Allow-Origin", o);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "600");
+  }
+}
+
 http.createServer(async (req, res) => {
   try {
     const { pathname } = new URL(req.url, "http://localhost");
+    if (pathname === "/api/plays" || pathname.startsWith("/api/plays/")) {
+      cors(req, res);
+      if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
+    }
     const m = pathname.match(/^\/api\/plays\/([^/]+)$/);
     if (m && req.method === "PUT") return await putPlay(req, res, decodeURIComponent(m[1]));
     if (pathname === "/api/plays" && req.method === "GET") return sendJson(res, 200, allPlays());

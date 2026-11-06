@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const SRC = "/home/claude/bsw2";
 const NM = "/home/claude/npmtmp/node_modules";
-const OUT = path.join(__dirname, "index.html");
+const API = process.env.BSW_API || "";
+const OUT = path.join(__dirname, process.env.BSW_OUT || "index.html");
 
 const rd = f => fs.readFileSync(f, "utf8");
 function rep(s, a, b, label) {
@@ -29,7 +30,7 @@ const fontCss = [400, 700, 800, 900].map(w => {
 html = rep(html, `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">\n<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>\n`, "", "externe Links");
 html = rep(html, `window.BSW_CONFIG = window.BSW_CONFIG || { contactUrl: "" };`,
   `window.BSW_CONFIG = window.BSW_CONFIG || {
-    local: true,                                   /* Runden werden im Browser dieses Geräts gespeichert (kein Server) */
+    ${API ? `api: "${API}",          /* anonyme Runden zentral auf dem Projektserver (Nürnberg) */` : `local: true,                                   /* Runden werden im Browser dieses Geräts gespeichert (kein Server) */`}
     contactMail: "falko.carl@hwr-berlin.de",       /* Kontakt per E-Mail statt Formular */
     playUrl: "./"                                   /* QR zeigt immer auf die Adresse, unter der die Datei liegt */
   };`, "Konfiguration");
@@ -87,7 +88,7 @@ app = rep(app, `    cOpen: {`, `    cMail: { de: "✉️ Kontakt per E-Mail", en
 
 /* Datenschutzsatz im Intro: ehrlich für den statischen Betrieb */
 app = rep(app, `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, for research in the KI-InnoX project (HW`,
-  `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, nur im Browser dieses Geräts, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, only in this device's browser, for research in the KI-InnoX project (HW`, "Datenschutz Intro");
+  API ? `privacy: { de: "Gespeichert werden nur deine Klicks, anonym, ohne Namen, Kontaktdaten oder IP-Adresse, auf dem Projektserver in Nürnberg, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, anonymously, without names, contact details or IP address, on the project server in Nuremberg, for research in the KI-InnoX project (HW` : `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, nur im Browser dieses Geräts, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, only in this device's browser, for research in the KI-InnoX project (HW`, "Datenschutz Intro");
 
 /* ---------- app.js: QR ohne externe Bibliothek ---------- */
 app = rep(app, `  function drawQr() {
@@ -106,7 +107,7 @@ app = rep(app, `  function drawQr() {
 app = rep(app, `          <a class="pill" href="#spiel" style="text-decoration:none;color:inherit">\${T(UI.backGame)}</a>
         </div>
       </div>`, `          <a class="pill" href="#spiel" style="text-decoration:none;color:inherit">\${T(UI.backGame)}</a>
-          \${(window.BSW_CONFIG || {}).local ? \`<button class="pill" id="expJson">\${T(UI.exportJson)}</button><button class="pill" id="expCsv">\${T(UI.exportCsv)}</button>\` : ""}
+          <button class="pill" id="expJson">\${T(UI.exportJson)}</button><button class="pill" id="expCsv">\${T(UI.exportCsv)}</button>
         </div>
       </div>
       \${(window.BSW_CONFIG || {}).local ? \`<p class="note">\${T(UI.localNote)}</p>\` : ""}`, "Export-Knöpfe");
