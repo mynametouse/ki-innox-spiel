@@ -30,7 +30,7 @@ html = rep(html, `window.BSW_CONFIG = window.BSW_CONFIG || { contactUrl: "" };`,
   `window.BSW_CONFIG = window.BSW_CONFIG || {
     local: true,                                   /* Runden werden im Browser dieses Geräts gespeichert (kein Server) */
     contactMail: "falko.carl@hwr-berlin.de",       /* Kontakt per E-Mail statt Formular */
-    playUrl: "https://apps.lab.reallabore.berlin/falko/"
+    playUrl: "./"                                   /* QR zeigt immer auf die Adresse, unter der die Datei liegt */
   };`, "Konfiguration");
 html = rep(html, `<style>`, `<style>\n${fontCss}\n`, "Schrift");
 html = rep(html, `<script src="logo.js"></script>\n<script src="data.js"></script>\n<script src="app.js"></script>`,
