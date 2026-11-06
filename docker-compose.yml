@@ -1,0 +1,14 @@
+services:
+  science:
+    build: .
+    restart: unless-stopped
+    mem_limit: 1g
+    volumes:
+      - science-data:/data      # anonyme Spielrunden (plays/) und getrennte Kontaktliste (contacts.jsonl)
+    networks: [lab]
+volumes:
+  science-data:
+networks:
+  lab:
+    external: true
+    name: lab_default
