@@ -5,6 +5,8 @@ const path = require("path");
 const SRC = "/home/claude/bsw2";
 const NM = "/home/claude/npmtmp/node_modules";
 const API = process.env.BSW_API || "";
+const FORM = process.env.BSW_FORM || "";          /* Google-Formular formResponse-URL (anonyme Sammelstelle) */
+const FORM_ENTRY = process.env.BSW_FORM_ENTRY || "";
 const OUT = path.join(__dirname, process.env.BSW_OUT || "index.html");
 
 const rd = f => fs.readFileSync(f, "utf8");
@@ -31,6 +33,8 @@ html = rep(html, `<link rel="preconnect" href="https://fonts.googleapis.com">\n<
 html = rep(html, `window.BSW_CONFIG = window.BSW_CONFIG || { contactUrl: "" };`,
   `window.BSW_CONFIG = window.BSW_CONFIG || {
     ${API ? `api: "${API}",          /* anonyme Runden zentral auf dem Projektserver (Nürnberg) */` : `local: true,                                   /* Runden werden im Browser dieses Geräts gespeichert (kein Server) */`}
+    ${FORM ? `formUrl: "${FORM}",
+    formEntry: "${FORM_ENTRY}",                 /* jede Runde zusätzlich anonym an das Google-Formular (Tabelle) */` : ""}
     contactMail: "falko.carl@hwr-berlin.de",       /* Kontakt per E-Mail statt Formular */
     playUrl: "./"                                   /* QR zeigt immer auf die Adresse, unter der die Datei liegt */
   };`, "Konfiguration");
@@ -46,8 +50,13 @@ app = rep(app, `    const api = (window.BSW_CONFIG || {}).api;
       const LKEY = "bsw-plays-v3";
       const readAll = () => { try { const a = JSON.parse(localStorage.getItem(LKEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
       docs = readAll(); status = "live";
+      const FORM = (window.BSW_CONFIG || {}).formUrl, ENTRY = (window.BSW_CONFIG || {}).formEntry;
       sendOne = async doc => {
-        try { const all = readAll().filter(d => d.id !== doc.id); all.push(doc); localStorage.setItem(LKEY, JSON.stringify(all)); docs = all; notify(); return true; }
+        try { const all = readAll().filter(d => d.id !== doc.id); all.push(doc); localStorage.setItem(LKEY, JSON.stringify(all)); docs = all; notify(); }
+        catch (e) { if (!FORM) return false; }
+        if (!FORM) return true;
+        /* anonyme Runde an die Sammelstelle (Google-Formular → Tabelle); bei Netzfehler bleibt sie in der Warteschlange */
+        try { const body = new URLSearchParams(); body.set(ENTRY, JSON.stringify(doc)); await fetch(FORM, { method: "POST", mode: "no-cors", body }); return true; }
         catch (e) { return false; }
       };
       window.addEventListener("storage", e => { if (e.key === LKEY) { docs = readAll(); notify(); } });
@@ -88,7 +97,7 @@ app = rep(app, `    cOpen: {`, `    cMail: { de: "✉️ Kontakt per E-Mail", en
 
 /* Datenschutzsatz im Intro: ehrlich für den statischen Betrieb */
 app = rep(app, `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, for research in the KI-InnoX project (HW`,
-  API ? `privacy: { de: "Gespeichert werden nur deine Klicks, anonym, ohne Namen, Kontaktdaten oder IP-Adresse, auf dem Projektserver in Nürnberg, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, anonymously, without names, contact details or IP address, on the project server in Nuremberg, for research in the KI-InnoX project (HW` : `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, nur im Browser dieses Geräts, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, only in this device's browser, for research in the KI-InnoX project (HW`, "Datenschutz Intro");
+  API ? `privacy: { de: "Gespeichert werden nur deine Klicks, anonym, ohne Namen, Kontaktdaten oder IP-Adresse, auf dem Projektserver in Nürnberg, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, anonymously, without names, contact details or IP address, on the project server in Nuremberg, for research in the KI-InnoX project (HW` : FORM ? `privacy: { de: "Gespeichert werden nur deine Klicks, anonym, ohne Namen oder Kontaktdaten. Für die Auswertung werden sie über Google Formulare (Google, USA) an das Projekt KI-InnoX (HWR Berlin) übertragen.", en: "Only your clicks are stored, anonymously, without names or contact details. For analysis they are sent via Google Forms (Google, USA) to the KI-InnoX project (HW` : `privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, nur im Browser dieses Geräts, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, only in this device's browser, for research in the KI-InnoX project (HW`, "Datenschutz Intro");
 
 /* ---------- app.js: QR ohne externe Bibliothek ---------- */
 app = rep(app, `  function drawQr() {

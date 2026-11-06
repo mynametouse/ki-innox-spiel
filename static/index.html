@@ -11,6 +11,8 @@
      Auf claude.ai: contactUrl = volle Adresse des Kontaktformulars auf dem Hetzner-Server. */
   window.BSW_CONFIG = window.BSW_CONFIG || {
     local: true,                                   /* Runden werden im Browser dieses Geräts gespeichert (kein Server) */
+    formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSe2VZbIOQWuylbRwKF9vmNEaUkNFey3KbptNIWA0M3HTf3jzw/formResponse",
+    formEntry: "entry.510740805",                 /* jede Runde zusätzlich anonym an das Google-Formular (Tabelle) */
     contactMail: "falko.carl@hwr-berlin.de",       /* Kontakt per E-Mail statt Formular */
     playUrl: "./"                                   /* QR zeigt immer auf die Adresse, unter der die Datei liegt */
   };
@@ -3350,7 +3352,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     hi2: { de: "Ich kann alles. Wirklich alles. 😏", en: "I can do anything. Really, anything. 😏" },
     hi3: { de: "Lass mich in einem Betrieb ran. Welcher soll's sein?", en: "Let me loose on a business. Which one?" },
     meta: { de: "⏱ 4–6 Minuten · anonym · keine Anmeldung", en: "⏱ 4–6 minutes · anonymous · no sign-up" },
-    privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, nur im Browser dieses Geräts, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, only in this device's browser, for research in the KI-InnoX project (HWR Berlin)." },
+    privacy: { de: "Gespeichert werden nur deine Klicks, anonym, ohne Namen oder Kontaktdaten. Für die Auswertung werden sie über Google Formulare (Google, USA) an das Projekt KI-InnoX (HWR Berlin) übertragen.", en: "Only your clicks are stored, anonymously, without names or contact details. For analysis they are sent via Google Forms (Google, USA) to the KI-InnoX project (HWR Berlin)." },
     prof1: { de: "Bevor's losgeht: 2 schnelle Fragen. Anonym, versprochen. 🤞", en: "Before we start: 2 quick questions. Anonymous, promise. 🤞" },
     prof2: { de: "Fast geschafft! Noch {n} kurze Fragen, dann kommt dein Ergebnis. 🎁", en: "Almost done! {n} more quick questions, then you get your result. 🎁" },
     by: { de: "Ein Forschungsspiel von KI-InnoX · IFAF Berlin", en: "A research game by KI-InnoX · IFAF Berlin" },
@@ -3492,8 +3494,13 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
       const LKEY = "bsw-plays-v3";
       const readAll = () => { try { const a = JSON.parse(localStorage.getItem(LKEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
       docs = readAll(); status = "live";
+      const FORM = (window.BSW_CONFIG || {}).formUrl, ENTRY = (window.BSW_CONFIG || {}).formEntry;
       sendOne = async doc => {
-        try { const all = readAll().filter(d => d.id !== doc.id); all.push(doc); localStorage.setItem(LKEY, JSON.stringify(all)); docs = all; notify(); return true; }
+        try { const all = readAll().filter(d => d.id !== doc.id); all.push(doc); localStorage.setItem(LKEY, JSON.stringify(all)); docs = all; notify(); }
+        catch (e) { if (!FORM) return false; }
+        if (!FORM) return true;
+        /* anonyme Runde an die Sammelstelle (Google-Formular → Tabelle); bei Netzfehler bleibt sie in der Warteschlange */
+        try { const body = new URLSearchParams(); body.set(ENTRY, JSON.stringify(doc)); await fetch(FORM, { method: "POST", mode: "no-cors", body }); return true; }
         catch (e) { return false; }
       };
       window.addEventListener("storage", e => { if (e.key === LKEY) { docs = readAll(); notify(); } });
@@ -4027,7 +4034,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
           <button class="pill" data-day="all" aria-pressed="${statsDay === "all"}">${T(UI.allDays)}</button>
           <button class="pill" id="sLang">${lang === "de" ? "EN" : "DE"}</button>
           <a class="pill" href="#spiel" style="text-decoration:none;color:inherit">${T(UI.backGame)}</a>
-          ${(window.BSW_CONFIG || {}).local ? `<button class="pill" id="expJson">${T(UI.exportJson)}</button><button class="pill" id="expCsv">${T(UI.exportCsv)}</button>` : ""}
+          <button class="pill" id="expJson">${T(UI.exportJson)}</button><button class="pill" id="expCsv">${T(UI.exportCsv)}</button>
         </div>
       </div>
       ${(window.BSW_CONFIG || {}).local ? `<p class="note">${T(UI.localNote)}</p>` : ""}

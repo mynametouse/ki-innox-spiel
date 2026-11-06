@@ -19,3 +19,8 @@ Quelle: `poster.js` (läuft in einem Shadow DOM, unabhängig vom Spiel-CSS).
 an den Projektserver (CORS für apps.lab.reallabore.berlin in `server.js`). Statistik (`#statistik`) zeigt dann alle Runden.
 Erst veröffentlichen, wenn https://science.reallabore.berlin/api/plays antwortet.
 Bauen: `BSW_API=https://science.reallabore.berlin/api BSW_OUT=index_server.html node build.js`
+
+## Sammelstelle Google-Formular (aktiv seit 06.11.2026, ca. 15:20)
+Jede Runde wird zusätzlich anonym (nur Spiel-JSON, keine E-Mail, keine Namen) per `POST` an ein Google-Formular gesendet
+(Konto falko.carl@gmail.com; Antworten landen in der Tabelle „KI-InnoX Science Week 2026 - Spielrunden (anonym)“).
+Bauen: `BSW_FORM=<formResponse-URL> BSW_FORM_ENTRY=entry.510740805 node build.js`
