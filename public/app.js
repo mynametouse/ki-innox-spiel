@@ -45,6 +45,8 @@
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
     skip: { de: "Überspringen", en: "Skip" },
     why: { de: "Und warum? 🤔", en: "And why? 🤔" },
+    whyKeepAsk: { de: "Du behältst das letzte Wort. Warum hast du dich so entschieden? 🤔", en: "You keep the final say. Why did you decide that way? 🤔" },
+    whyGiveAsk: { de: "Du lässt mich das allein machen. Warum hast du dich so entschieden? 🤔", en: "You're letting me do it on my own. Why did you decide that way? 🤔" },
     next: { de: "Weiter", en: "Next" },
     fact: { de: "💡 Wusstest du?", en: "💡 Did you know?" },
     psst: { de: "Psst: Das war gerade ein kleines Experiment. 🔬", en: "Psst: that was a little experiment. 🔬" },
@@ -544,7 +546,7 @@
     S.ch.push(rec);
     if (st.why && typeof o.lvl === "number") {
       const dir = o.lvl >= 4 ? "give" : "keep";
-      await kai(UI.why, "think", run);
+      await kai(dir === "give" ? UI.whyGiveAsk : UI.whyKeepAsk, "think", run);
       const wo = shuffled(G.WHY[dir].length), items = wo.map(i => G.WHY[dir][i]);
       const w = await ask({ kind: "chips", items, skip: true }); alive(run);
       if (w >= 0) { rec.why = items[w].id; push({ t: "me", text: { de: items[w].de, en: items[w].en } }); }
