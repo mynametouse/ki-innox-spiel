@@ -79,6 +79,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 900; margin: 0; text
 .ph-row svg.kai { width: 38px; height: 38px; flex: none; }
 .hbtn { background: transparent; border: 1.5px solid #5a5a5a; color: #fff; border-radius: 999px; padding: 4px 11px; font-size: 0.82em; font-weight: 700; }
 .meters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.prog { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,.85); }
+.prog .pb { height: 6px; border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+.prog .pb i { display: block; height: 100%; border-radius: 99px; background: var(--orange); transition: width .5s ease; }
+.prog span { white-space: nowrap; }
 .mm .t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 420px) { .mm .w { display: none; } }
 .mm { display: grid; gap: 3px; font-size: 0.8em; color: #d9d9d9; }

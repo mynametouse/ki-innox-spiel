@@ -45,6 +45,9 @@
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
     skip: { de: "Überspringen", en: "Skip" },
     why: { de: "Und warum? 🤔", en: "And why? 🤔" },
+    progLeft: { de: "Noch {n} Fragen", en: "{n} questions left" },
+    progLeft1: { de: "Noch 1 Frage", en: "1 question left" },
+    progDone: { de: "Geschafft ✓", en: "Done ✓" },
     whyKeepAsk: { de: "Du behältst das letzte Wort. Warum hast du dich so entschieden? 🤔", en: "You keep the final say. Why did you decide that way? 🤔" },
     whyGiveAsk: { de: "Du lässt mich das allein machen. Warum hast du dich so entschieden? 🤔", en: "You're letting me do it on my own. Why did you decide that way? 🤔" },
     next: { de: "Weiter", en: "Next" },
@@ -278,9 +281,25 @@
         <button class="hbtn" id="btnLang" aria-label="${lang === "de" ? "Sprache: Englisch" : "Language: German"}">${lang === "de" ? "EN" : "DE"}</button>
         <button class="hbtn" id="btnNew" title="${T(UI.restart)}">⟲ ${T(UI.restart)}</button>
       </div>
-      ${sc ? `<div class="meters">${["z", "v", "r", "a"].map(k => meterHtml(k)).join("")}</div>` : ""}`;
+      ${sc ? `<div class="meters">${["z", "v", "r", "a"].map(k => meterHtml(k)).join("")}</div>${progHtml()}` : ""}`;
     document.getElementById("btnLang").onclick = () => { lang = lang === "de" ? "en" : "de"; try { localStorage.setItem("bsw-lang", lang); } catch (e) {} render(); };
     document.getElementById("btnNew").onclick = () => startNew();
+  }
+  /* Fortschritt: alle Antworten einer Runde (Profil, Entscheidungen, Gründe), damit niemand kurz vor Schluss aufgibt */
+  function progTotal() {
+    const sc = scen(); if (!sc) return 0;
+    const steps = sc.steps.length;
+    const whyN = sc.steps.filter(st => st.type !== "seite" && st.why).length - (S.whyMissed || 0);
+    const postN = S.rn === 1 ? G.PROFILE_POST.filter(q => !(q.skipIfMinor && S.prof && S.prof.alter === "u18")).length : 0;
+    return (S.preN || 0) + steps + whyN + postN;
+  }
+  function progHtml() {
+    const total = progTotal(); if (!total) return "";
+    const done = Math.min(S.qDone || 0, total), left = total - done;
+    const pct = S.finished ? 100 : Math.round(done / total * 100);
+    const lab = S.finished || !left ? T(UI.progDone) : left === 1 ? T(UI.progLeft1) : t(UI.progLeft, { n: left });
+    return `<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="${esc(lab)}">
+      <div class="pb"><i style="width:${pct}%"></i></div><span>${lab} · ${pct} %</span></div>`;
   }
   const MLAB = { z: { i: "⏱", de: "Zeit", en: "Time" }, v: { i: "🤝", de: "Vertrauen", en: "Trust" }, r: { i: "⚠️", de: "Risiko", en: "Risk" }, a: { i: "🔗", de: "Abhängig", en: "Lock-in" } };
   function meterHtml(k) {
@@ -440,7 +459,10 @@
   }
   function resolveDock(val) {
     if (!S.dock) return;
-    const r = S.dock.resolve; S.dock = null; renderDock(); r(val);
+    const kind = S.dock.spec.kind;
+    const r = S.dock.resolve; S.dock = null; renderDock();
+    if (S.sc && (kind === "answers" || kind === "chips")) { S.qDone = (S.qDone || 0) + 1; renderHead(); }
+    r(val);
   }
   function renderDock() {
     const el = document.getElementById("dock"); if (!el) return;
@@ -506,6 +528,7 @@
   }
   async function play(id, run) {
     S.sc = id; S.m = Object.assign({}, G.START); S.ch = []; S.sw = null; S.t0 = Date.now();
+    S.qDone = 0; S.whyMissed = 0; S.finished = false; S.preN = S.prof ? 0 : G.PROFILE_PRE.length;
     const sc = scen();
     push({ t: "me", icon: "", text: sc.name });
     renderHead();
@@ -550,7 +573,7 @@
       const wo = shuffled(G.WHY[dir].length), items = wo.map(i => G.WHY[dir][i]);
       const w = await ask({ kind: "chips", items, skip: true }); alive(run);
       if (w >= 0) { rec.why = items[w].id; push({ t: "me", text: { de: items[w].de, en: items[w].en } }); }
-    }
+    } else if (st.why) { S.whyMissed = (S.whyMissed || 0) + 1; renderHead(); }
     push({ t: "fact", text: st.fact });
     await ask({ kind: "next" }); alive(run);
   }
@@ -579,6 +602,7 @@
       prof: Object.assign({}, S.prof || {}), ch: S.ch.map(c => ({ d: c.d, o: c.o, l: c.l, s: c.s, inc: c.inc, disc: c.disc, why: c.why, pos: c.pos, ord: c.ord })),
       sw: S.sw, end: e.id, m, dur: Math.round((Date.now() - S.t0) / 1000) };
     Store.add(doc);
+    S.finished = true; renderHead();
     await kai(UI.end1, "happy", run);
     await kai(UI.end2, "wink", run);
     push({ t: "result", end: e.id, sid: S.sid, ts: doc.ts, ch: S.ch.map(c => ({ l: c.l, icon: c.icon })) });
