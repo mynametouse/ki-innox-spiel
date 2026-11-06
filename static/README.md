@@ -8,3 +8,8 @@ Gedacht für `https://apps.lab.reallabore.berlin/falko/` (Veröffentlichen-Aktio
   Bitte täglich exportieren und nicht im privaten Fenster spielen.
 - Kontakt läuft per E-Mail (mailto-Link bzw. QR auf dem Laptop), getrennt von den Spieldaten.
 - Gebaut mit `build.js` aus den Quellen in `public/` (Stand 06.11.2026).
+
+## Stand-Bildschirm
+`…/#bildschirm` zeigt statt des Spiels ein animiertes Plakat mit großem QR-Code (zeigt auf die Adresse ohne `#bildschirm`),
+Mini-Chat mit Kais Originalvorschlägen und Projektrahmen. Klick = Vollbild, Mauszeiger verschwindet, Bildschirm bleibt wach (Wake Lock).
+Quelle: `poster.js` (läuft in einem Shadow DOM, unabhängig vom Spiel-CSS).

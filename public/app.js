@@ -1,6 +1,7 @@
 /* „Deine KI will loslegen. Lässt du sie?“ V2 – Chat mit Kai. Mobil zuerst, Laptop im Telefonrahmen. */
 (function () {
   "use strict";
+  if (window.__POSTER) return; /* Stand-Bildschirm (#bildschirm) statt Spiel */
   const G = window.GAME;
   const root = document.getElementById("root");
   const KIOSK = window.matchMedia && matchMedia("(pointer: fine)").matches;

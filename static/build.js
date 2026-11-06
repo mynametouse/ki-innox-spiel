@@ -16,6 +16,7 @@ let html = rd(path.join(SRC, "index.html"));
 let app = rd(path.join(SRC, "app.js"));
 const data = rd(path.join(SRC, "data.js"));
 const logo = rd(path.join(SRC, "logo.js"));
+const poster = rd(path.join(SRC, "poster.js"));
 const qr = rd(path.join(NM, "qrcode-generator/dist/qrcode.js"));
 
 /* ---------- Schrift inline (Nunito, latin, SIL OFL) ---------- */
@@ -135,6 +136,7 @@ const scripts = [
   `<script>/* qrcode-generator 2.0.4 · (c) Kazuhiko Arase · MIT */\n${guard(qr)}\n</script>`,
   `<script>\n${guard(logo)}\n</script>`,
   `<script>\n${guard(data)}\n</script>`,
+  `<script>\n${guard(poster)}\n</script>`,
   `<script>\n${guard(app)}\n</script>`
 ].join("\n");
 html = html.replace("__SCRIPTS__", () => scripts);
