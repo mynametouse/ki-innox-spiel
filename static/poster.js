@@ -62,6 +62,13 @@
     { ctx: "🤝 Neue KI-Plattform, erstes Jahr gratis", ask: "Gratis! Da sag ich doch nicht nein, oder? 😍" },
     { ctx: "✍️ Vertrag mit dem Großkunden", ask: "Hab ich geschrieben! Perfektes Juristendeutsch. Unterschreiben? 🖊️" }
   ];
+  const TYPES = [
+    { e: "✋", n: "Handarbeit", d: "macht fast alles selbst", c: "#b3b3b3" },
+    { e: "🔍", n: "Endkontrolle", d: "KI bereitet vor, die Zusagen macht der Mensch", c: "#3f9b6e" },
+    { e: "🛡️", n: "Sicherheitsnetz", d: "KI darf handeln, aber mit klaren Grenzen", c: "#f58220" },
+    { e: "🙈", n: "Blindflug", d: "KI macht fast alles allein", c: "#fe6748" },
+    { e: "🕸️", n: "Plattform-Falle", d: "bequem, und dann abhängig", c: "#8076a0" }
+  ];
   const CHIPS = [
     { t: "✅ Mach einfach", kai: "Juhu! Ist raus. 🚀", mood: "happy" },
     { t: "👀 Zeig erst mal", kai: "Hier, mein Entwurf. 📝", mood: "wink" },
@@ -114,6 +121,13 @@
   @keyframes ptap { 50% { transform: translate(-.15em, -.25em) scale(.9); } }
   .pst .fade { animation: pfade .5s ease forwards; }
   @keyframes pfade { to { opacity: 0; transform: translateY(-.6em); } }
+  .pst .types { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4em; animation: ppop .35s ease both; }
+  .pst .ty { display: flex; flex-direction: column; align-items: center; gap: .15em; min-width: 0; padding: .4em .15em; border-radius: .8em;
+    border: 2px solid var(--tc); background: #fff; transition: transform .25s, background .25s, color .25s; }
+  .pst .ty b { font-size: 1.45em; line-height: 1.1; }
+  .pst .ty small { font-size: .56em; font-weight: 800; white-space: nowrap; }
+  .pst .ty.on { background: var(--tc); color: #fff; transform: translateY(-.2em) scale(1.08); }
+  .pst .tyd { font-weight: 700; min-height: 1.3em; }
 
   /* QR-Karte */
   .pst .right { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.6vh; }
@@ -185,10 +199,25 @@
   }
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  async function typesSlide(feed, av) {
+    av.innerHTML = kai("wink");
+    feed.innerHTML = `<div class="ctx">🎯 Am Ende verrät Kai dir deinen Typ</div><div class="bub">Welcher KI-Typ bist du? 🤔</div>
+      <div class="types">${TYPES.map(t => `<span class="ty" style="--tc:${t.c}"><b>${t.e}</b><small>${t.n}</small></span>`).join("")}</div><div class="tyd" id="ptyd"></div>`;
+    const tys = [...feed.querySelectorAll(".ty")];
+    for (let k = 0; k < TYPES.length; k++) {
+      tys.forEach((el, j) => el.classList.toggle("on", j === k));
+      $("ptyd").textContent = `${TYPES[k].e} ${TYPES[k].n}: ${TYPES[k].d}`;
+      await sleep(RM ? 2500 : 1900);
+    }
+    await sleep(500);
+    [...feed.children].forEach(el => el.classList.add("fade"));
+    await sleep(500);
+  }
   async function chatLoop() {
     const feed = $("pfeed"), av = $("pav");
-    let i = Math.floor(Math.random() * LINES.length);
+    let i = Math.floor(Math.random() * LINES.length), round = 0;
     for (;;) {
+      if (round++ % 3 === 2) { await typesSlide(feed, av); continue; }
       const L = LINES[i % LINES.length]; i++;
       const ch = CHIPS[Math.floor(Math.random() * CHIPS.length)];
       feed.innerHTML = `<div class="ctx">${L.ctx}</div><div class="bub typing"><i></i><i></i><i></i></div>`;

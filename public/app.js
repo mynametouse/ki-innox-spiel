@@ -45,6 +45,12 @@
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
     skip: { de: "Überspringen", en: "Skip" },
     why: { de: "Und warum? 🤔", en: "And why? 🤔" },
+    tTitle: { de: "Alle 5 KI-Typen", en: "All 5 AI types" },
+    tLeft: { de: "selbst machen", en: "do it yourself" },
+    tRight: { de: "KI allein", en: "AI alone" },
+    tSpecial: { de: "Sonderfall: abhängig von einer KI-Plattform", en: "Special case: dependent on one AI platform" },
+    tHint: { de: "👆 Tippe auf einen Typ.", en: "👆 Tap a type." },
+    tYou: { de: "Du", en: "You" },
     progLeft: { de: "Noch {n} Fragen", en: "{n} questions left" },
     progLeft1: { de: "Noch 1 Frage", en: "1 question left" },
     progDone: { de: "Geschafft ✓", en: "Done ✓" },
@@ -416,6 +422,34 @@
     return "";
   }
 
+  /* Typen-Skala: alle Ergebnis-Typen von „selbst machen“ bis „KI allein“, Plattform-Falle als Sonderfall */
+  const TSCALE = ["hand", "kontrolle", "netz", "blindflug"];
+  const TDESC = {
+    hand: { de: "Macht fast alles selbst. Viel Vertrauen, aber die Zeit wird knapp.", en: "Does almost everything personally. Lots of trust, but time runs short." },
+    kontrolle: { de: "Die KI bereitet vor, die wichtigen Zusagen macht der Mensch. So arbeiten alle 10 befragten Betriebe.", en: "The AI prepares, a person makes the important commitments. All 10 businesses we interviewed work this way." },
+    netz: { de: "Die KI darf handeln, aber mit klaren Grenzen: Betragsgrenze, Rücktrittsrecht, Prüfung.", en: "The AI may act, but within clear limits: amount caps, withdrawal rights, checks." },
+    blindflug: { de: "Die KI macht fast alles allein. Schnell, aber für Fehler steht trotzdem der Mensch gerade.", en: "The AI does almost everything alone. Fast, but a person still answers for the mistakes." },
+    falle: { de: "Bequem auf eine KI-Plattform gesetzt. Jetzt gelten deren Regeln, ein Wechsel wird teuer.", en: "Went all-in on one AI platform for convenience. Now its rules apply and switching is costly." }
+  };
+  function typeScaleHtml(cur) {
+    const btn = id => { const e = G.ENDINGS.find(x => x.id === id); if (!e) return "";
+      return `<button type="button" class="tchip${id === cur ? " me" : ""}" data-type="${id}" style="--tc:${e.color}" aria-label="${esc(t(e.name))}">
+        <span class="te">${e.emoji}</span><span class="tn">${T(e.name)}</span>${id === cur ? `<span class="tyou">${T(UI.tYou)}</span>` : ""}</button>`; };
+    return `<div class="tscale">
+      <div class="th">${T(UI.tTitle)}</div>
+      <div class="tax"><span>✋ ${T(UI.tLeft)}</span><span>${T(UI.tRight)} 🤖</span></div>
+      <div class="trow">${TSCALE.map(btn).join("")}</div>
+      <div class="trow2">${btn("falle")}<span class="tnote">${T(UI.tSpecial)}</span></div>
+      <p class="tdesc" aria-live="polite">${T(UI.tHint)}</p>
+    </div>`;
+  }
+  document.addEventListener("click", ev => {
+    const b = ev.target.closest && ev.target.closest(".tchip"); if (!b) return;
+    const box = b.closest(".tscale"); if (!box) return;
+    box.querySelectorAll(".tchip").forEach(x => x.classList.toggle("sel", x === b));
+    const e = G.ENDINGS.find(x => x.id === b.dataset.type);
+    box.querySelector(".tdesc").textContent = `${e.emoji} ${t(e.name)}: ${t(TDESC[e.id])}`;
+  });
   function resultHtml(m) {
     const e = G.ENDINGS.find(x => x.id === m.end);
     const others = Store.all().filter(p => p.v === 3 && p.day === dayStr() && !(p.sid === m.sid && p.ts === m.ts));
@@ -429,6 +463,7 @@
       <div class="prof">${m.ch.map(c => `<span style="background:${LVLC[typeof c.l === "number" ? c.l : "p"]}">${esc(c.icon || "")}</span>`).join("")}</div>
       <p class="res-note">💡 ${T(e.res)}</p>
       <p class="res-note">${line}</p>
+      ${typeScaleHtml(m.end)}
       <div class="thesis">${T(UI.thesis)}<div style="font-family:var(--font-body);font-weight:400;font-size:.78em;margin-top:6px">${T(UI.thesisSub)}</div></div>
       <div class="sender">${window.IFAF_LOGO || ""}<span>KI-InnoX</span></div>
     </div>`;
