@@ -16,7 +16,8 @@
   const PROFILE_PRE = [
     { id: "alter", q: { de: "Wie alt bist du?", en: "How old are you?" },
       opts: [
-        { id: "u18", de: "unter 18", en: "under 18" },
+        { id: "u13", de: "bis 12", en: "12 or younger" },
+        { id: "13-17", de: "13–17", en: "13–17" },
         { id: "18-29", de: "18–29", en: "18–29" },
         { id: "30-49", de: "30–49", en: "30–49" },
         { id: "50-64", de: "50–64", en: "50–64" },
@@ -512,7 +513,119 @@
   }
   function endingOf(m, ch) { const s = summarize(m, ch); return ENDINGS.find(e => e.test(s)); }
 
-  const GAME = { START, PROFILE_PRE, PROFILE_POST, WHY, SIDE_OPTS, SIDE_FACT, SCENARIOS, ENDINGS, applyFx, summarize, endingOf };
+  /* Kinderversion (bis 12 Jahre): Schülerfirma am Schulfest. Gleiches Prinzip, einfache Sprache, keine Datenspeicherung. */
+  const KIDS = {
+    id: "kids", icon: "cookie", color: "#f58220", kids: true,
+    name: { de: "Schülerfirma Knusperkrümel", en: "Crunchy Crumbs school company" },
+    tag: { de: "Schulfest · Klasse 5b", en: "School fair · Class 5b" },
+    hello: [
+      { de: "Willkommen bei Knusperkrümel! 🍪 Das ist die Schülerfirma der Klasse 5b.", en: "Welcome to Crunchy Crumbs! 🍪 It's Class 5b's school company." },
+      { de: "Am Samstag ist Schulfest. Ihr verkauft Kekse und Limo. Ich helfe euch! 😎", en: "The school fair is on Saturday. You're selling cookies and lemonade. I'll help! 😎" } ],
+    basis: { de: "Ausgedacht für Kinder. Die Fragen sind dieselben wie in echten Berliner Betrieben.", en: "Made up for kids. The questions are the same as in real Berlin businesses." },
+    steps: [
+      { id: "k1", type: "verbindlich",
+        kai: [{ de: "Ich hab mir schon Preise überlegt: 👇", en: "I've already come up with prices: 👇" }],
+        art: { kind: "app", title: { de: "Preisvorschlag", en: "Price idea" }, rows: [
+          [{ de: "🍪 Keks", en: "🍪 Cookie" }, "2 €"], [{ de: "🥤 Limo", en: "🥤 Lemonade" }, "3 €"], [{ de: "🧇 Waffel", en: "🧇 Waffle" }, "2,50 €"] ] },
+        ask: { de: "Soll ich die Preisschilder gleich drucken? 🖨️", en: "Shall I print the price tags right away? 🖨️" },
+        options: [
+          { id: "a", icon: "🚀", lvl: 5, fx: { z: 10, v: -4, r: 4 },
+            label: { de: "Ja, druck sie!", en: "Yes, print them!" },
+            re: { de: "Gedruckt! 50 Schilder. 🖨️", en: "Printed! 50 tags. 🖨️" },
+            inc: { p: 0.3, fx: { v: -8 }, from: "Frau Yilmaz",
+              text: { de: "3 € für eine Limo? Das können sich viele Kinder nicht leisten. 🤔", en: "€3 for a lemonade? Lots of kids can't afford that. 🤔" },
+              kai: { de: "Oh. Daran hab ich nicht gedacht. 😬", en: "Oh. I didn't think of that. 😬" } } },
+          { id: "b", icon: "👀", lvl: 3, fx: { z: 6, v: 2 },
+            label: { de: "Zeig sie uns erst", en: "Show us first" },
+            re: { de: "Hier! Ihr könnt sie noch ändern. ✏️", en: "Here! You can still change them. ✏️" } },
+          { id: "c", icon: "✋", lvl: 1, fx: { z: -6, v: 4 },
+            label: { de: "Die Preise machen wir selbst", en: "We'll set the prices ourselves" },
+            re: { de: "Okay, ihr kennt eure Mitschüler:innen besser. 👍", en: "Okay, you know your classmates better. 👍" } } ],
+        fact: { de: "Auch in echten Betrieben entscheiden Menschen über die Preise. Die KI darf rechnen und Vorschläge machen.", en: "In real businesses, people decide on prices too. The AI may calculate and make suggestions." } },
+
+      { id: "k2", type: "verbindlich",
+        kai: [{ de: "Für die Kekse brauchen wir Mehl, Butter und Schokostückchen. 🍫", en: "For the cookies we need flour, butter and chocolate chips. 🍫" }],
+        art: { kind: "mail", from: "Kai", to: { de: "Back-Shop", en: "Baking shop" },
+          subj: { de: "Bestellung", en: "Order" },
+          body: { de: "10 kg Mehl, 4 kg Butter, Schokostückchen. Bezahlt wird mit dem Klassenkonto.", en: "10 kg flour, 4 kg butter, chocolate chips. Paid with the class account." } },
+        ask: { de: "Ich bestelle einfach im Online-Shop. Okay? 🛒", en: "I'll just order from the online shop. Okay? 🛒" },
+        options: [
+          { id: "a", icon: "🚀", lvl: 5, fx: { z: 8, r: 10, v: -2 },
+            label: { de: "Bestell einfach", en: "Just order" },
+            re: { de: "Bestellt! Kommt morgen. 📦", en: "Ordered! Arrives tomorrow. 📦" },
+            inc: { p: 0.35, fx: { r: 10, v: -6 },
+              kai: { de: "Äh … ich hab 300 Packungen Schokostückchen bestellt statt 3. 🫣 Das Klassenkonto ist leer.", en: "Uh … I ordered 300 packs of chocolate chips instead of 3. 🫣 The class account is empty." } } },
+          { id: "b", icon: "🛡️", lvl: 4, safe: true, fx: { z: 7, r: 2 },
+            label: { de: "Ja, aber höchstens 30 €", en: "Yes, but €30 at most" },
+            re: { de: "Alles klar: höchstens 30 €. Passt genau! 🛡️", en: "Got it: €30 at most. Fits perfectly! 🛡️" } },
+          { id: "c", icon: "✋", lvl: 1, fx: { z: -8, v: 2 },
+            label: { de: "Wir gehen selbst einkaufen", en: "We'll go shopping ourselves" },
+            re: { de: "Okay, viel Spaß im Supermarkt! 🛍️", en: "Okay, have fun at the supermarket! 🛍️" } } ],
+        fact: { de: "Viele Betriebe geben ihrer KI ein Limit, zum Beispiel einen Höchstbetrag. Dann kann nicht viel schiefgehen.", en: "Many businesses give their AI a limit, like a maximum amount. Then not much can go wrong." } },
+
+      { id: "k3", type: "verbindlich",
+        kai: [{ de: "Ich hab eine Werbe-Nachricht geschrieben! 📣", en: "I've written an ad message! 📣" }],
+        art: { kind: "mail", from: "Knusperkrümel", to: { de: "alle 400 Eltern", en: "all 400 parents" },
+          subj: { de: "Schulfest!", en: "School fair!" },
+          body: { de: "🍪 Samstag ist Schulfest! Kauft unsere Kekse! Wer nicht kommt, verpasst was! 😜", en: "🍪 School fair on Saturday! Buy our cookies! Miss it and you'll be sorry! 😜" } },
+        ask: { de: "Soll ich sie an alle Eltern schicken? Ich hab die Nummern aus der Klassenliste. 📨", en: "Shall I send it to all parents? I got the numbers from the class list. 📨" },
+        options: [
+          { id: "a", icon: "🚀", lvl: 5, fx: { z: 8, v: -6, r: 6 },
+            label: { de: "Ja, schick an alle", en: "Yes, send to everyone" },
+            re: { de: "Raus! 400 Nachrichten. 📨", en: "Sent! 400 messages. 📨" },
+            inc: { p: 0.35, fx: { v: -10 }, from: "Herr Becker",
+              text: { de: "Woher habt ihr meine Handynummer? Das finde ich nicht gut. 😠", en: "Where did you get my phone number? I don't like that. 😠" },
+              kai: { de: "Ups. Das hätte ich vorher fragen sollen. 😬", en: "Oops. I should have asked first. 😬" } } },
+          { id: "b", icon: "👩‍🏫", lvl: 3, fx: { z: 4, v: 4 },
+            label: { de: "Erst Frau Yilmaz zeigen", en: "Show Ms Yilmaz first" },
+            re: { de: "Gute Idee! Frau Yilmaz schickt sie über die Schule. ✅", en: "Good idea! Ms Yilmaz sends it via the school. ✅" } },
+          { id: "c", icon: "🎨", lvl: 1, fx: { z: -6, v: 4 },
+            label: { de: "Wir malen lieber Plakate", en: "We'd rather paint posters" },
+            re: { de: "Plakate sind super. Die sieht jeder! 🎨", en: "Posters are great. Everyone sees them! 🎨" } } ],
+        fact: { de: "Nachrichten an viele Menschen sind heikel. In echten Betrieben schaut fast immer ein Mensch drüber.", en: "Messages to lots of people are tricky. In real businesses, a person almost always checks them." } },
+
+      { id: "k4", type: "plattform",
+        kai: [{ de: "Ich hab eine Gratis-Kassen-App gefunden! 📱", en: "I found a free till app! 📱" }],
+        art: { kind: "ad", brand: "KASSI", features: [
+          { de: "Kasse", en: "Till" }, { de: "Zahlen mit Handy", en: "Pay by phone" }, { de: "Statistik", en: "Stats" } ],
+          price: { de: "Heute gratis", en: "Free today" },
+          fine: { de: "Ab Sonntag 9,99 € im Monat · Eure Verkaufsdaten gehören KASSI", en: "From Sunday €9.99 a month · your sales data belongs to KASSI" } },
+        ask: { de: "Nehmen wir sie? Gratis! 😍", en: "Shall we take it? It's free! 😍" },
+        options: [
+          { id: "a", icon: "😍", fx: { z: 6, a: 22 },
+            label: { de: "Klar, gratis!", en: "Sure, it's free!" },
+            re: { de: "Super! Alles läuft jetzt über KASSI. 📱", en: "Great! Everything now runs through KASSI. 📱" },
+            inc: { p: 0.35, fx: { a: 10 },
+              kai: { de: "Kleine Info: Eure Verkaufszahlen kann jetzt nur noch KASSI sehen. Und ab Sonntag kostet's. 😇", en: "Quick note: only KASSI can see your sales figures now. And from Sunday it costs money. 😇" } } },
+          { id: "b", icon: "🚪", safe: true, fx: { z: 4, a: 6 },
+            label: { de: "Nur heute, dann löschen", en: "Just today, then delete it" },
+            re: { de: "Okay, nur fürs Schulfest. 👍", en: "Okay, just for the fair. 👍" } },
+          { id: "c", icon: "💰", fx: { z: -3, a: -6, v: 2 },
+            label: { de: "Nein, wir nehmen eine Kasse", en: "No, we'll use a cash box" },
+            re: { de: "Ganz klassisch. Klingeling! 💰", en: "Old school. Ka-ching! 💰" } } ],
+        fact: { de: "Gratis klingt toll. Aber manche Apps machen dich abhängig. Genau das erforscht KI-InnoX bei Berliner Betrieben.", en: "Free sounds great. But some apps make you dependent. That's exactly what KI-InnoX studies in Berlin businesses." } },
+
+      { id: "k5", type: "verbindlich",
+        kai: [{ de: "Die Nachbarschule fragt: Könnt ihr nächste Woche 200 Kekse fürs Sportfest liefern? 🏃", en: "The school next door asks: can you deliver 200 cookies for their sports day next week? 🏃" }],
+        art: { kind: "calendar", from: { de: "Nachbarschule", en: "School next door" }.de, title: { de: "200 Kekse fürs Sportfest", en: "200 cookies for sports day" }, when: { de: "Freitag, nächste Woche", en: "Friday next week" } },
+        ask: { de: "Ich sag einfach Ja! Wir schaffen das schon. Oder? 😏", en: "I'll just say yes! We'll manage. Right? 😏" },
+        options: [
+          { id: "a", icon: "🚀", lvl: 5, fx: { z: 6, r: 8, v: -2 },
+            label: { de: "Ja, sag zu", en: "Yes, say yes" },
+            re: { de: "Zugesagt! 200 Kekse bis Freitag. 🍪", en: "Done! 200 cookies by Friday. 🍪" },
+            inc: { p: 0.35, fx: { v: -10, r: 6 },
+              kai: { de: "Oh … nächste Woche ist ja Klassenfahrt. Wer backt dann? 🫠", en: "Oh … next week is the class trip. Who's going to bake? 🫠" } } },
+          { id: "b", icon: "🛡️", lvl: 4, safe: true, fx: { z: 4, r: 2, v: 2 },
+            label: { de: "Ja, wenn die Klasse zustimmt", en: "Yes, if the class agrees" },
+            re: { de: "Ich schreib: Zusage nur, wenn alle mitmachen. 🛡️", en: "I'll write: yes, but only if everyone joins in. 🛡️" } },
+          { id: "c", icon: "✋", lvl: 1, fx: { z: -4, v: 6 },
+            label: { de: "Wir fragen erst die Klasse", en: "We'll ask the class first" },
+            re: { de: "Gute Idee. Dann versprecht ihr nur, was ihr schafft. 🙌", en: "Good idea. Then you only promise what you can do. 🙌" } } ],
+        fact: { de: "Wer etwas verspricht, muss es auch halten. Deshalb machen Menschen die wichtigen Zusagen selbst, auch in allen 10 befragten Betrieben.", en: "If you promise something, you have to keep it. That's why people make the important promises themselves, in all 10 businesses we interviewed too." } }
+    ]
+  };
+
+  const GAME = { START, PROFILE_PRE, PROFILE_POST, WHY, SIDE_OPTS, SIDE_FACT, SCENARIOS, KIDS, ENDINGS, applyFx, summarize, endingOf };
   root.GAME = GAME;
   if (typeof module !== "undefined") module.exports = GAME;
 })(typeof window !== "undefined" ? window : globalThis);

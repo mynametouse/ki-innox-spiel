@@ -37,9 +37,14 @@
     hi1: { de: "Hi! Ich bin Kai, deine neue KI. 🤖", en: "Hi! I'm Kai, your new AI. 🤖" },
     hi2: { de: "Ich kann alles. Wirklich alles. 😏", en: "I can do anything. Really, anything. 😏" },
     hi3: { de: "Lass mich in einem Betrieb ran. Welcher soll's sein?", en: "Let me loose on a business. Which one?" },
+    ageIntro: { de: "Kurz vorweg, damit ich weiß, was zu dir passt. Anonym, versprochen. 🤞", en: "Quick question first, so I know what suits you. Anonymous, promise. 🤞" },
+    kidHi: { de: "Cool! Für dich hab ich was Besonderes: eure eigene Schülerfirma! 🍪", en: "Cool! I've got something special for you: your own school company! 🍪" },
+    kidAgain: { de: "Nochmal? Super! Diesmal vielleicht anders entscheiden? 😏", en: "Again? Great! Maybe decide differently this time? 😏" },
+    againKid: { de: "🔁 Nochmal spielen", en: "🔁 Play again" },
     meta: { de: "⏱ 4–6 Minuten · anonym · keine Anmeldung", en: "⏱ 4–6 minutes · anonymous · no sign-up" },
     privacy: { de: "Gespeichert werden nur deine Klicks, ohne Namen oder Kontaktdaten, für die Forschung im Projekt KI-InnoX (HWR Berlin).", en: "Only your clicks are stored, without names or contact details, for research in the KI-InnoX project (HWR Berlin)." },
     prof1: { de: "Bevor's losgeht: 2 schnelle Fragen. Anonym, versprochen. 🤞", en: "Before we start: 2 quick questions. Anonymous, promise. 🤞" },
+    prof1One: { de: "Bevor's losgeht: noch eine schnelle Frage. 🤞", en: "Before we start: one more quick question. 🤞" },
     prof2: { de: "Fast geschafft! Noch {n} kurze Fragen, dann kommt dein Ergebnis. 🎁", en: "Almost done! {n} more quick questions, then you get your result. 🎁" },
     by: { de: "Ein Forschungsspiel von KI-InnoX · IFAF Berlin", en: "A research game by KI-InnoX · IFAF Berlin" },
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
@@ -153,6 +158,7 @@
   const ICONS = {
     stone: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="14" fill="#f1f1f1"/><rect x="8" y="38" width="48" height="16" rx="3" fill="#b3b3b3" stroke="#212121" stroke-width="3"/><rect x="16" y="22" width="32" height="16" rx="3" fill="#e2e2e2" stroke="#212121" stroke-width="3"/><path d="M25 22 L30 12 L39 12 L43 22" fill="#f58220" stroke="#212121" stroke-width="3" stroke-linejoin="round"/></svg>`,
     truck: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="14" fill="#e4f2f5"/><rect x="6" y="20" width="32" height="24" rx="3" fill="#fff" stroke="#212121" stroke-width="3"/><path d="M38 27 H49 L57 36 V44 H38 Z" fill="#f58220" stroke="#212121" stroke-width="3" stroke-linejoin="round"/><circle cx="17" cy="47" r="5" fill="#212121"/><circle cx="48" cy="47" r="5" fill="#212121"/><path d="M22 25 V39 M15 32 H29 M17 27 L27 37 M27 27 L17 37" stroke="#4ea2b3" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+    cookie: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="14" fill="#fff1e6"/><circle cx="32" cy="33" r="20" fill="#e3a35d" stroke="#212121" stroke-width="3"/><circle cx="25" cy="27" r="3" fill="#5a3416"/><circle cx="38" cy="25" r="2.6" fill="#5a3416"/><circle cx="36" cy="38" r="3.2" fill="#5a3416"/><circle cx="24" cy="39" r="2.4" fill="#5a3416"/><circle cx="31" cy="32" r="1.8" fill="#5a3416"/></svg>`,
     app: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="14" fill="#fff1e6"/><rect x="18" y="7" width="28" height="50" rx="6" fill="#fff" stroke="#212121" stroke-width="3"/><path d="M26 37 L36 25 M34 22 a4 4 0 1 0 5 5" stroke="#212121" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="32" cy="51" r="2.2" fill="#212121"/><circle cx="47" cy="12" r="7" fill="#f58220" stroke="#212121" stroke-width="3"/></svg>`
   };
 
@@ -229,7 +235,10 @@
       sc: null, m: Object.assign({}, G.START), ch: [], sw: null, t0: Date.now() };
   }
   function alive(run) { if (!S || S.run !== run) throw ABORT; }
-  function scen() { return G.SCENARIOS.find(s => s.id === S.sc); }
+  function scen() { return S.sc === "kids" ? G.KIDS : G.SCENARIOS.find(s => s.id === S.sc); }
+  const MINOR = ["u13", "13-17", "u18"];
+  function isMinor() { return !!(S.prof && MINOR.includes(S.prof.alter)); }
+  function isKid() { return !!(S.prof && S.prof.alter === "u13"); }
 
   /* ---------- Rendern ---------- */
   function route() { return location.hash === "#statistik" ? "statistik" : "spiel"; }
@@ -296,7 +305,7 @@
     const sc = scen(); if (!sc) return 0;
     const steps = sc.steps.length;
     const whyN = sc.steps.filter(st => st.type !== "seite" && st.why).length - (S.whyMissed || 0);
-    const postN = S.rn === 1 ? G.PROFILE_POST.filter(q => !(q.skipIfMinor && S.prof && S.prof.alter === "u18")).length : 0;
+    const postN = S.rn === 1 && !isKid() ? G.PROFILE_POST.filter(q => !(q.skipIfMinor && isMinor())).length : 0;
     return (S.preN || 0) + steps + whyN + postN;
   }
   function progHtml() {
@@ -515,8 +524,8 @@
       h = `<button class="primary" data-v="next">${T(UI.next)} ➜</button>`;
     } else if (sp.kind === "end") {
       h = KIOSK
-        ? `<button class="primary y" data-v="person">${T(UI.nextPerson)}</button><button class="primary" data-v="again">${T(UI.againSame)}</button>`
-        : `<button class="primary y" data-v="again">${T(UI.again)}</button><a class="skip" href="#statistik">${T(UI.seeStats)}</a>`;
+        ? `<button class="primary y" data-v="person">${T(UI.nextPerson)}</button><button class="primary" data-v="again">${T(isKid() ? UI.againKid : UI.againSame)}</button>`
+        : `<button class="primary y" data-v="again">${T(isKid() ? UI.againKid : UI.again)}</button>${isKid() ? "" : `<a class="skip" href="#statistik">${T(UI.seeStats)}</a>`}`;
     }
     el.innerHTML = h;
     const atResult = S.log.length && S.log[S.log.length - 1].t === "result";
@@ -531,6 +540,13 @@
   async function intro(run) {
     await kai(UI.hi1, "happy", run);
     await kai(UI.hi2, "smug", run);
+    /* Alter zuerst: bis 12 Jahre gibt es die Kinderversion (Schülerfirma), ohne Datenspeicherung */
+    if (!S.prof) {
+      S.prof = {};
+      await kai(UI.ageIntro, "happy", run);
+      await askProfile([G.PROFILE_PRE[0]], run);
+    }
+    if (isKid()) { await kai(UI.kidHi, "happy", run); await play("kids", run); return; }
     await kai(UI.hi3, "happy", run);
     const id = await ask({ kind: "scen" }); alive(run);
     await play(id, run);
@@ -542,7 +558,7 @@
   }
   async function askProfile(list, run) {
     for (const q of list) {
-      if (q.skipIfMinor && S.prof.alter === "u18") { S.prof[q.id] = null; continue; }
+      if (q.skipIfMinor && isMinor()) { S.prof[q.id] = null; continue; }
       await kai(q.q, "happy", run);
       const k = await ask({ kind: "chips", items: q.opts, skip: true }); alive(run);
       if (k >= 0) { S.prof[q.id] = q.opts[k].id; push({ t: "me", text: { de: q.opts[k].de, en: q.opts[k].en } }); }
@@ -550,24 +566,28 @@
     }
   }
   async function profilePre(run) {
-    S.prof = {};
-    await kai(UI.prof1, "happy", run);
-    await askProfile(G.PROFILE_PRE, run);
+    if (!S.prof) S.prof = {};
+    const open = G.PROFILE_PRE.filter(q => !(q.id in S.prof));
+    if (!open.length) return;
+    await kai(open.length === 1 ? UI.prof1One : UI.prof1, "happy", run);
+    await askProfile(open, run);
     await kai(UI.profDone, "happy", run);
   }
   async function profilePost(run) {
-    const n = G.PROFILE_POST.filter(q => !(q.skipIfMinor && S.prof.alter === "u18")).length;
+    const n = G.PROFILE_POST.filter(q => !(q.skipIfMinor && isMinor())).length;
     await kai(t(UI.prof2, { n }), "happy", run);
     await askProfile(G.PROFILE_POST, run);
     await kai(UI.profDone, "happy", run);
   }
   async function play(id, run) {
     S.sc = id; S.m = Object.assign({}, G.START); S.ch = []; S.sw = null; S.t0 = Date.now();
-    S.qDone = 0; S.whyMissed = 0; S.finished = false; S.preN = S.prof ? 0 : G.PROFILE_PRE.length;
+    if (!S.prof) S.prof = {};
+    S.qDone = 0; S.whyMissed = 0; S.finished = false;
+    S.preN = isKid() ? 0 : G.PROFILE_PRE.filter(q => !(q.id in S.prof)).length;
     const sc = scen();
     push({ t: "me", icon: "", text: sc.name });
     renderHead();
-    if (!S.prof) await profilePre(run);
+    if (!isKid()) await profilePre(run);
     for (const line of sc.hello) await kai(line, "happy", run);
     for (const st of sc.steps) {
       if (st.type === "seite") await side(st, run); else await decision(st, run);
@@ -629,14 +649,14 @@
     await ask({ kind: "next" }); alive(run);
   }
   async function finish(run) {
-    if (S.rn === 1) await profilePost(run);
+    if (S.rn === 1 && !isKid()) await profilePost(run);
     const e = G.endingOf(S.m, S.ch);
     const m = {}; for (const k in S.m) m[k] = Math.round(S.m[k]);
     const ts = Date.now();
     const doc = { id: S.sid + "-" + ts, v: 3, ts, day: dayStr(), sid: S.sid, rn: S.rn, sc: S.sc, lang, dev: KIOSK ? "maus" : "touch",
       prof: Object.assign({}, S.prof || {}), ch: S.ch.map(c => ({ d: c.d, o: c.o, l: c.l, s: c.s, inc: c.inc, disc: c.disc, why: c.why, pos: c.pos, ord: c.ord })),
       sw: S.sw, end: e.id, m, dur: Math.round((Date.now() - S.t0) / 1000) };
-    Store.add(doc);
+    if (!isKid()) Store.add(doc);   /* Kinderrunden (bis 12) werden nicht gespeichert */
     S.finished = true; renderHead();
     await kai(UI.end1, "happy", run);
     await kai(UI.end2, "wink", run);
@@ -644,13 +664,14 @@
     if (KIOSK) armResultTimer();
     await sleep(1800); alive(run);
     await kai(UI.thanksKai, "happy", run);
-    if (!(S.prof && S.prof.alter === "u18")) push({ t: "contact" });
+    if (!isMinor()) push({ t: "contact" });
     const v = await ask({ kind: "end" }); alive(run);
     clearTimeout(resultTimer);
     if (v === "person") return startNew();
     /* gleiche Person, anderer Betrieb: Profil bleibt */
     const keep = { sid: S.sid, prof: S.prof, rn: S.rn };
     newSession(keep); render(); runFlow(async r => {
+      if (isKid()) { await kai(UI.kidAgain, "happy", r); await play("kids", r); return; }
       await kai(UI.hi3, "happy", r);
       const id = await ask({ kind: "scen" }); alive(r);
       await play(id, r);
