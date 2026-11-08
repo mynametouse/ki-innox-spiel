@@ -36,7 +36,7 @@
     restart: { de: "Neu", en: "New" },
     hi1: { de: "Hi! Ich bin Kai, deine neue KI. 🤖", en: "Hi! I'm Kai, your new AI. 🤖" },
     hi2: { de: "Ich kann alles. Wirklich alles. 😏", en: "I can do anything. Really, anything. 😏" },
-    hi3: { de: "Lass mich in einem Betrieb ran. Welcher soll's sein?", en: "Let me loose on a business. Which one?" },
+    hi3: { de: "Stell dir vor, dir gehört ein Berliner Betrieb – und ich bin deine neue KI. Welcher Betrieb soll's sein?", en: "Imagine you own a Berlin business – and I'm your new AI. Which business will it be?" },
     ageIntro: { de: "Kurz vorweg, damit ich weiß, was zu dir passt. Anonym, versprochen. 🤞", en: "Quick question first, so I know what suits you. Anonymous, promise. 🤞" },
     kidHi: { de: "Cool! Für dich hab ich was Besonderes: eure eigene Schülerfirma! 🍪", en: "Cool! I've got something special for you: your own school company! 🍪" },
     kidAgain: { de: "Nochmal? Super! Diesmal vielleicht anders entscheiden? 😏", en: "Again? Great! Maybe decide differently this time? 😏" },
