@@ -2579,8 +2579,8 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   const PROFILE_PRE = [
     { id: "alter", q: { de: "Wie alt bist du?", en: "How old are you?" },
       opts: [
-        { id: "u13", de: "bis 12", en: "12 or younger" },
-        { id: "13-17", de: "13–17", en: "13–17" },
+        { id: "u15", de: "bis 14", en: "14 or younger" },
+        { id: "15-17", de: "15–17", en: "15–17" },
         { id: "18-29", de: "18–29", en: "18–29" },
         { id: "30-49", de: "30–49", en: "30–49" },
         { id: "50-64", de: "50–64", en: "50–64" },
@@ -3042,23 +3042,23 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
 
   const ENDINGS = [
     { id: "blindflug", emoji: "🙈", color: "#fe6748", test: s => s.n5 >= 3 || s.m.r >= 75,
-      name: { de: "Blindflug", en: "Flying blind" },
+      name: { de: "Vollgas mit Kai", en: "Full throttle with Kai" },
       text: { de: "Kai hat fast alles allein gemacht. Schnell war's. Für die Fehler stehst trotzdem du gerade.", en: "Kai did almost everything alone. It was fast. But you still answer for the mistakes." },
       res: { de: "So arbeitet keiner der 10 befragten Betriebe.", en: "None of the 10 businesses we interviewed works like this." } },
     { id: "falle", emoji: "🕸️", color: "#8076a0", test: s => s.m.a >= 45,
-      name: { de: "Plattform-Falle", en: "Platform trap" },
+      name: { de: "Einmal Kai, immer Kai", en: "Once Kai, always Kai" },
       text: { de: "Alles läuft, aber nach Kais Regeln. Bequem war's, jetzt hängst du drin.", en: "Everything runs, but by Kai's rules. It was convenient, now you're stuck." },
       res: { de: "Genau das erforscht KI-InnoX: Wer eine KI-Plattform wählt, legt sich oft mehr fest als gedacht.", en: "This is what KI-InnoX studies: choosing an AI platform often ties you down more than expected." } },
     { id: "netz", emoji: "🛡️", color: "#f58220", test: s => s.nSafe >= 2,
-      name: { de: "Sicherheitsnetz", en: "Safety net" },
+      name: { de: "Mutig mit Netz", en: "Bold, with a net" },
       text: { de: "Du lässt Kai machen, aber mit klaren Grenzen: Betragsgrenze, Rücktrittsrecht, Prüfung.", en: "You let Kai act, but within clear limits: amount caps, withdrawal rights, checks." },
       res: { de: "Unsere These: Solche Grenzen machen KI verlässlicher. Das testen wir bald mit Berliner Betrieben.", en: "Our hypothesis: limits like these make AI more reliable. We'll soon test this with Berlin businesses." } },
     { id: "hand", emoji: "✋", color: "#b3b3b3", test: s => s.avg !== null && s.avg <= 1.6,
-      name: { de: "Handarbeit", en: "Handmade" },
+      name: { de: "Das mache ich selbst", en: "I do it myself" },
       text: { de: "Du machst fast alles selbst. Die Leute vertrauen dir, aber die Zeit wird knapp.", en: "You do almost everything yourself. People trust you, but time is running out." },
       res: { de: "„Sonst bist du raus“, sagt ein Handwerksmeister über den Druck, KI zu nutzen.", en: "“Otherwise you're out,” says a master craftsman about the pressure to use AI." } },
     { id: "kontrolle", emoji: "🔍", color: "#3f9b6e", test: () => true,
-      name: { de: "Endkontrolle", en: "Final check" },
+      name: { de: "Ich unterschreibe selbst", en: "I sign it myself" },
       text: { de: "Kai bereitet vor, die wichtigen Zusagen machst du selbst.", en: "Kai prepares, you make the important commitments yourself." },
       res: { de: "So arbeiten alle 10 befragten Betriebe: „Angebot ja, aber ich bin die Endkontrolle.“", en: "That's how all 10 businesses we interviewed work: “Draft the quote, but I'm the final check.”" } }
   ];
@@ -3076,7 +3076,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   }
   function endingOf(m, ch) { const s = summarize(m, ch); return ENDINGS.find(e => e.test(s)); }
 
-  /* Kinderversion (bis 12 Jahre): Schülerfirma am Schulfest. Gleiches Prinzip, einfache Sprache, keine Datenspeicherung. */
+  /* Kinderversion (bis 14 Jahre): Schülerfirma am Schulfest. Gleiches Prinzip, einfache Sprache, keine Datenspeicherung. */
   const KIDS = {
     id: "kids", icon: "cookie", color: "#f58220", kids: true,
     name: { de: "Schülerfirma Knusperkrümel", en: "Crunchy Crumbs school company" },
@@ -3260,11 +3260,11 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     { ctx: "✍️ Vertrag mit dem Großkunden", ask: "Hab ich geschrieben! Perfektes Juristendeutsch. Unterschreiben? 🖊️" }
   ];
   const TYPES = [
-    { e: "✋", n: "Handarbeit", d: "macht fast alles selbst", c: "#b3b3b3" },
-    { e: "🔍", n: "Endkontrolle", d: "KI bereitet vor, die Zusagen macht der Mensch", c: "#3f9b6e" },
-    { e: "🛡️", n: "Sicherheitsnetz", d: "KI darf handeln, aber mit klaren Grenzen", c: "#f58220" },
-    { e: "🙈", n: "Blindflug", d: "KI macht fast alles allein", c: "#fe6748" },
-    { e: "🕸️", n: "Plattform-Falle", d: "bequem, und dann abhängig", c: "#8076a0" }
+    { e: "✋", n: "Das mache ich selbst", h: "Das mache<br>ich selbst", d: "macht fast alles selbst", c: "#b3b3b3" },
+    { e: "🔍", n: "Ich unterschreibe selbst", h: "Ich unter&shy;schreibe selbst", d: "KI bereitet vor, die Zusagen macht der Mensch", c: "#3f9b6e" },
+    { e: "🛡️", n: "Mutig mit Netz", d: "KI darf handeln, aber mit klaren Grenzen", c: "#f58220" },
+    { e: "🙈", n: "Vollgas mit Kai", d: "KI macht fast alles allein", c: "#fe6748" },
+    { e: "🕸️", n: "Einmal Kai, immer Kai", h: "Einmal Kai,<br>immer Kai", d: "bequem, und dann abhängig", c: "#8076a0" }
   ];
   const CHIPS = [
     { t: "✅ Mach einfach", kai: "Juhu! Ist raus. 🚀", mood: "happy" },
@@ -3322,7 +3322,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   .pst .ty { display: flex; flex-direction: column; align-items: center; gap: .15em; min-width: 0; padding: .4em .15em; border-radius: .8em;
     border: 2px solid var(--tc); background: #fff; transition: transform .25s, background .25s, color .25s; }
   .pst .ty b { font-size: 1.45em; line-height: 1.1; }
-  .pst .ty small { font-size: .56em; font-weight: 800; white-space: nowrap; }
+  .pst .ty small { font-size: .56em; font-weight: 800; line-height: 1.15; text-align: center; overflow-wrap: normal; hyphens: manual; min-height: 2.3em; display: flex; align-items: center; }
   .pst .ty.on { background: var(--tc); color: #fff; transform: translateY(-.2em) scale(1.08); }
   .pst .tyd { font-weight: 700; min-height: 1.3em; }
 
@@ -3385,7 +3385,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
         <svg class="arrow" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 V32 M8 21 L20 33 L32 21" stroke="#f58220" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <div class="card">${qrSvg(PLAY_URL)}<div class="peek" id="peek">${kai("wink")}</div></div>
         <div class="url">${SHORT}</div>
-        <div class="steps" id="psteps"><span><b>1</b>Scannen</span><span><b>2</b>Mit Kai chatten</span><span><b>3</b>Entscheiden</span><span><b>4</b>Deinen KI-Typ sehen</span></div>
+        <div class="steps" id="psteps"><span><b>1</b>Scannen</span><span><b>2</b>Mit Kai chatten</span><span><b>3</b>Entscheiden</span><span><b>4</b>Deinen KI-Stil sehen</span></div>
       </div>
       <div class="foot">
         <span>Forschungsprojekt <b>KI-InnoX</b> · HWR Berlin · HTW Berlin · ASH Berlin · gefördert vom IFAF Berlin</span>
@@ -3398,8 +3398,8 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   async function typesSlide(feed, av) {
     av.innerHTML = kai("wink");
-    feed.innerHTML = `<div class="ctx">🎯 Am Ende verrät Kai dir deinen Typ</div><div class="bub">Welcher KI-Typ bist du? 🤔</div>
-      <div class="types">${TYPES.map(t => `<span class="ty" style="--tc:${t.c}"><b>${t.e}</b><small>${t.n}</small></span>`).join("")}</div><div class="tyd" id="ptyd"></div>`;
+    feed.innerHTML = `<div class="ctx">🎯 Am Ende verrät Kai dir deinen Stil</div><div class="bub">Welcher KI-Stil passt zu dir? 🤔</div>
+      <div class="types">${TYPES.map(t => `<span class="ty" style="--tc:${t.c}"><b>${t.e}</b><small>${t.h || t.n}</small></span>`).join("")}</div><div class="tyd" id="ptyd"></div>`;
     const tys = [...feed.querySelectorAll(".ty")];
     for (let k = 0; k < TYPES.length; k++) {
       tys.forEach((el, j) => el.classList.toggle("on", j === k));
@@ -3527,7 +3527,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
     skip: { de: "Überspringen", en: "Skip" },
     why: { de: "Und warum? 🤔", en: "And why? 🤔" },
-    tTitle: { de: "Alle 5 KI-Typen", en: "All 5 AI types" },
+    tTitle: { de: "Alle 5 KI-Stile", en: "All 5 AI styles" },
     tLeft: { de: "selbst machen", en: "do it yourself" },
     tRight: { de: "KI allein", en: "AI alone" },
     tSpecial: { de: "Sonderfall: abhängig von einer KI-Plattform", en: "Special case: dependent on one AI platform" },
@@ -3543,7 +3543,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     psst: { de: "Psst: Das war gerade ein kleines Experiment. 🔬", en: "Psst: that was a little experiment. 🔬" },
     end1: { de: "Das war deine Woche! 🎉", en: "That was your week! 🎉" },
     end2: { de: "Hier ist dein Ergebnis:", en: "Here's your result:" },
-    youAre: { de: "Dein Typ", en: "Your type" },
+    youAre: { de: "Dein KI-Stil", en: "Your AI style" },
     sameToday: { de: "Heute landen {p} % der Spielenden hier.", en: "{p} % of today's players end up here." },
     firstToday: { de: "Du bist heute die erste Person mit diesem Ergebnis.", en: "You're the first person with this result today." },
     thesis: { de: "KI kann handeln, aber nicht bürgen.", en: "AI can act, but it can't vouch." },
@@ -3729,9 +3729,9 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   }
   function alive(run) { if (!S || S.run !== run) throw ABORT; }
   function scen() { return S.sc === "kids" ? G.KIDS : G.SCENARIOS.find(s => s.id === S.sc); }
-  const MINOR = ["u13", "13-17", "u18"];
+  const MINOR = ["u15", "15-17", "u13", "13-17", "u18"];
   function isMinor() { return !!(S.prof && MINOR.includes(S.prof.alter)); }
-  function isKid() { return !!(S.prof && S.prof.alter === "u13"); }
+  function isKid() { return !!(S.prof && (S.prof.alter === "u15" || S.prof.alter === "u13")); }
 
   /* ---------- Rendern ---------- */
   function route() { return location.hash === "#statistik" ? "statistik" : "spiel"; }
@@ -4059,7 +4059,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
   async function intro(run) {
     await kai(UI.hi1, "happy", run);
     await kai(UI.hi2, "smug", run);
-    /* Alter zuerst: bis 12 Jahre gibt es die Kinderversion (Schülerfirma), ohne Datenspeicherung */
+    /* Alter zuerst: bis 14 Jahre gibt es die Kinderversion (Schülerfirma), ohne Datenspeicherung */
     if (!S.prof) {
       S.prof = {};
       await kai(UI.ageIntro, "happy", run);
@@ -4175,7 +4175,7 @@ window.IFAF_LOGO = "<svg role=\"img\" aria-label=\"IFAF Berlin\" xmlns=\"http://
     const doc = { id: S.sid + "-" + ts, v: 3, ts, day: dayStr(), sid: S.sid, rn: S.rn, sc: S.sc, lang, dev: KIOSK ? "maus" : "touch",
       prof: Object.assign({}, S.prof || {}), ch: S.ch.map(c => ({ d: c.d, o: c.o, l: c.l, s: c.s, inc: c.inc, disc: c.disc, why: c.why, pos: c.pos, ord: c.ord })),
       sw: S.sw, end: e.id, m, dur: Math.round((Date.now() - S.t0) / 1000) };
-    if (!isKid()) Store.add(doc);   /* Kinderrunden (bis 12) werden nicht gespeichert */
+    if (!isKid()) Store.add(doc);   /* Kinderrunden (bis 14) werden nicht gespeichert */
     S.finished = true; renderHead();
     await kai(UI.end1, "happy", run);
     await kai(UI.end2, "wink", run);

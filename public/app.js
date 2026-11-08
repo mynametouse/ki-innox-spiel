@@ -50,7 +50,7 @@
     profDone: { de: "Danke! 🙌", en: "Thanks! 🙌" },
     skip: { de: "Überspringen", en: "Skip" },
     why: { de: "Und warum? 🤔", en: "And why? 🤔" },
-    tTitle: { de: "Alle 5 KI-Typen", en: "All 5 AI types" },
+    tTitle: { de: "Alle 5 KI-Stile", en: "All 5 AI styles" },
     tLeft: { de: "selbst machen", en: "do it yourself" },
     tRight: { de: "KI allein", en: "AI alone" },
     tSpecial: { de: "Sonderfall: abhängig von einer KI-Plattform", en: "Special case: dependent on one AI platform" },
@@ -66,7 +66,7 @@
     psst: { de: "Psst: Das war gerade ein kleines Experiment. 🔬", en: "Psst: that was a little experiment. 🔬" },
     end1: { de: "Das war deine Woche! 🎉", en: "That was your week! 🎉" },
     end2: { de: "Hier ist dein Ergebnis:", en: "Here's your result:" },
-    youAre: { de: "Dein Typ", en: "Your type" },
+    youAre: { de: "Dein KI-Stil", en: "Your AI style" },
     sameToday: { de: "Heute landen {p} % der Spielenden hier.", en: "{p} % of today's players end up here." },
     firstToday: { de: "Du bist heute die erste Person mit diesem Ergebnis.", en: "You're the first person with this result today." },
     thesis: { de: "KI kann handeln, aber nicht bürgen.", en: "AI can act, but it can't vouch." },
@@ -236,9 +236,9 @@
   }
   function alive(run) { if (!S || S.run !== run) throw ABORT; }
   function scen() { return S.sc === "kids" ? G.KIDS : G.SCENARIOS.find(s => s.id === S.sc); }
-  const MINOR = ["u13", "13-17", "u18"];
+  const MINOR = ["u15", "15-17", "u13", "13-17", "u18"];
   function isMinor() { return !!(S.prof && MINOR.includes(S.prof.alter)); }
-  function isKid() { return !!(S.prof && S.prof.alter === "u13"); }
+  function isKid() { return !!(S.prof && (S.prof.alter === "u15" || S.prof.alter === "u13")); }
 
   /* ---------- Rendern ---------- */
   function route() { return location.hash === "#statistik" ? "statistik" : "spiel"; }
@@ -540,7 +540,7 @@
   async function intro(run) {
     await kai(UI.hi1, "happy", run);
     await kai(UI.hi2, "smug", run);
-    /* Alter zuerst: bis 12 Jahre gibt es die Kinderversion (Schülerfirma), ohne Datenspeicherung */
+    /* Alter zuerst: bis 14 Jahre gibt es die Kinderversion (Schülerfirma), ohne Datenspeicherung */
     if (!S.prof) {
       S.prof = {};
       await kai(UI.ageIntro, "happy", run);
@@ -656,7 +656,7 @@
     const doc = { id: S.sid + "-" + ts, v: 3, ts, day: dayStr(), sid: S.sid, rn: S.rn, sc: S.sc, lang, dev: KIOSK ? "maus" : "touch",
       prof: Object.assign({}, S.prof || {}), ch: S.ch.map(c => ({ d: c.d, o: c.o, l: c.l, s: c.s, inc: c.inc, disc: c.disc, why: c.why, pos: c.pos, ord: c.ord })),
       sw: S.sw, end: e.id, m, dur: Math.round((Date.now() - S.t0) / 1000) };
-    if (!isKid()) Store.add(doc);   /* Kinderrunden (bis 12) werden nicht gespeichert */
+    if (!isKid()) Store.add(doc);   /* Kinderrunden (bis 14) werden nicht gespeichert */
     S.finished = true; renderHead();
     await kai(UI.end1, "happy", run);
     await kai(UI.end2, "wink", run);

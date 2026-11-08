@@ -16,8 +16,8 @@
   const PROFILE_PRE = [
     { id: "alter", q: { de: "Wie alt bist du?", en: "How old are you?" },
       opts: [
-        { id: "u13", de: "bis 12", en: "12 or younger" },
-        { id: "13-17", de: "13–17", en: "13–17" },
+        { id: "u15", de: "bis 14", en: "14 or younger" },
+        { id: "15-17", de: "15–17", en: "15–17" },
         { id: "18-29", de: "18–29", en: "18–29" },
         { id: "30-49", de: "30–49", en: "30–49" },
         { id: "50-64", de: "50–64", en: "50–64" },
@@ -479,23 +479,23 @@
 
   const ENDINGS = [
     { id: "blindflug", emoji: "🙈", color: "#fe6748", test: s => s.n5 >= 3 || s.m.r >= 75,
-      name: { de: "Blindflug", en: "Flying blind" },
+      name: { de: "Vollgas mit Kai", en: "Full throttle with Kai" },
       text: { de: "Kai hat fast alles allein gemacht. Schnell war's. Für die Fehler stehst trotzdem du gerade.", en: "Kai did almost everything alone. It was fast. But you still answer for the mistakes." },
       res: { de: "So arbeitet keiner der 10 befragten Betriebe.", en: "None of the 10 businesses we interviewed works like this." } },
     { id: "falle", emoji: "🕸️", color: "#8076a0", test: s => s.m.a >= 45,
-      name: { de: "Plattform-Falle", en: "Platform trap" },
+      name: { de: "Einmal Kai, immer Kai", en: "Once Kai, always Kai" },
       text: { de: "Alles läuft, aber nach Kais Regeln. Bequem war's, jetzt hängst du drin.", en: "Everything runs, but by Kai's rules. It was convenient, now you're stuck." },
       res: { de: "Genau das erforscht KI-InnoX: Wer eine KI-Plattform wählt, legt sich oft mehr fest als gedacht.", en: "This is what KI-InnoX studies: choosing an AI platform often ties you down more than expected." } },
     { id: "netz", emoji: "🛡️", color: "#f58220", test: s => s.nSafe >= 2,
-      name: { de: "Sicherheitsnetz", en: "Safety net" },
+      name: { de: "Mutig mit Netz", en: "Bold, with a net" },
       text: { de: "Du lässt Kai machen, aber mit klaren Grenzen: Betragsgrenze, Rücktrittsrecht, Prüfung.", en: "You let Kai act, but within clear limits: amount caps, withdrawal rights, checks." },
       res: { de: "Unsere These: Solche Grenzen machen KI verlässlicher. Das testen wir bald mit Berliner Betrieben.", en: "Our hypothesis: limits like these make AI more reliable. We'll soon test this with Berlin businesses." } },
     { id: "hand", emoji: "✋", color: "#b3b3b3", test: s => s.avg !== null && s.avg <= 1.6,
-      name: { de: "Handarbeit", en: "Handmade" },
+      name: { de: "Das mache ich selbst", en: "I do it myself" },
       text: { de: "Du machst fast alles selbst. Die Leute vertrauen dir, aber die Zeit wird knapp.", en: "You do almost everything yourself. People trust you, but time is running out." },
       res: { de: "„Sonst bist du raus“, sagt ein Handwerksmeister über den Druck, KI zu nutzen.", en: "“Otherwise you're out,” says a master craftsman about the pressure to use AI." } },
     { id: "kontrolle", emoji: "🔍", color: "#3f9b6e", test: () => true,
-      name: { de: "Endkontrolle", en: "Final check" },
+      name: { de: "Ich unterschreibe selbst", en: "I sign it myself" },
       text: { de: "Kai bereitet vor, die wichtigen Zusagen machst du selbst.", en: "Kai prepares, you make the important commitments yourself." },
       res: { de: "So arbeiten alle 10 befragten Betriebe: „Angebot ja, aber ich bin die Endkontrolle.“", en: "That's how all 10 businesses we interviewed work: “Draft the quote, but I'm the final check.”" } }
   ];
@@ -513,7 +513,7 @@
   }
   function endingOf(m, ch) { const s = summarize(m, ch); return ENDINGS.find(e => e.test(s)); }
 
-  /* Kinderversion (bis 12 Jahre): Schülerfirma am Schulfest. Gleiches Prinzip, einfache Sprache, keine Datenspeicherung. */
+  /* Kinderversion (bis 14 Jahre): Schülerfirma am Schulfest. Gleiches Prinzip, einfache Sprache, keine Datenspeicherung. */
   const KIDS = {
     id: "kids", icon: "cookie", color: "#f58220", kids: true,
     name: { de: "Schülerfirma Knusperkrümel", en: "Crunchy Crumbs school company" },

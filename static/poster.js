@@ -63,11 +63,11 @@
     { ctx: "✍️ Vertrag mit dem Großkunden", ask: "Hab ich geschrieben! Perfektes Juristendeutsch. Unterschreiben? 🖊️" }
   ];
   const TYPES = [
-    { e: "✋", n: "Handarbeit", d: "macht fast alles selbst", c: "#b3b3b3" },
-    { e: "🔍", n: "Endkontrolle", d: "KI bereitet vor, die Zusagen macht der Mensch", c: "#3f9b6e" },
-    { e: "🛡️", n: "Sicherheitsnetz", d: "KI darf handeln, aber mit klaren Grenzen", c: "#f58220" },
-    { e: "🙈", n: "Blindflug", d: "KI macht fast alles allein", c: "#fe6748" },
-    { e: "🕸️", n: "Plattform-Falle", d: "bequem, und dann abhängig", c: "#8076a0" }
+    { e: "✋", n: "Das mache ich selbst", h: "Das mache<br>ich selbst", d: "macht fast alles selbst", c: "#b3b3b3" },
+    { e: "🔍", n: "Ich unterschreibe selbst", h: "Ich unter&shy;schreibe selbst", d: "KI bereitet vor, die Zusagen macht der Mensch", c: "#3f9b6e" },
+    { e: "🛡️", n: "Mutig mit Netz", d: "KI darf handeln, aber mit klaren Grenzen", c: "#f58220" },
+    { e: "🙈", n: "Vollgas mit Kai", d: "KI macht fast alles allein", c: "#fe6748" },
+    { e: "🕸️", n: "Einmal Kai, immer Kai", h: "Einmal Kai,<br>immer Kai", d: "bequem, und dann abhängig", c: "#8076a0" }
   ];
   const CHIPS = [
     { t: "✅ Mach einfach", kai: "Juhu! Ist raus. 🚀", mood: "happy" },
@@ -125,7 +125,7 @@
   .pst .ty { display: flex; flex-direction: column; align-items: center; gap: .15em; min-width: 0; padding: .4em .15em; border-radius: .8em;
     border: 2px solid var(--tc); background: #fff; transition: transform .25s, background .25s, color .25s; }
   .pst .ty b { font-size: 1.45em; line-height: 1.1; }
-  .pst .ty small { font-size: .56em; font-weight: 800; white-space: nowrap; }
+  .pst .ty small { font-size: .56em; font-weight: 800; line-height: 1.15; text-align: center; overflow-wrap: normal; hyphens: manual; min-height: 2.3em; display: flex; align-items: center; }
   .pst .ty.on { background: var(--tc); color: #fff; transform: translateY(-.2em) scale(1.08); }
   .pst .tyd { font-weight: 700; min-height: 1.3em; }
 
@@ -188,7 +188,7 @@
         <svg class="arrow" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 V32 M8 21 L20 33 L32 21" stroke="#f58220" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <div class="card">${qrSvg(PLAY_URL)}<div class="peek" id="peek">${kai("wink")}</div></div>
         <div class="url">${SHORT}</div>
-        <div class="steps" id="psteps"><span><b>1</b>Scannen</span><span><b>2</b>Mit Kai chatten</span><span><b>3</b>Entscheiden</span><span><b>4</b>Deinen KI-Typ sehen</span></div>
+        <div class="steps" id="psteps"><span><b>1</b>Scannen</span><span><b>2</b>Mit Kai chatten</span><span><b>3</b>Entscheiden</span><span><b>4</b>Deinen KI-Stil sehen</span></div>
       </div>
       <div class="foot">
         <span>Forschungsprojekt <b>KI-InnoX</b> · HWR Berlin · HTW Berlin · ASH Berlin · gefördert vom IFAF Berlin</span>
@@ -201,8 +201,8 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   async function typesSlide(feed, av) {
     av.innerHTML = kai("wink");
-    feed.innerHTML = `<div class="ctx">🎯 Am Ende verrät Kai dir deinen Typ</div><div class="bub">Welcher KI-Typ bist du? 🤔</div>
-      <div class="types">${TYPES.map(t => `<span class="ty" style="--tc:${t.c}"><b>${t.e}</b><small>${t.n}</small></span>`).join("")}</div><div class="tyd" id="ptyd"></div>`;
+    feed.innerHTML = `<div class="ctx">🎯 Am Ende verrät Kai dir deinen Stil</div><div class="bub">Welcher KI-Stil passt zu dir? 🤔</div>
+      <div class="types">${TYPES.map(t => `<span class="ty" style="--tc:${t.c}"><b>${t.e}</b><small>${t.h || t.n}</small></span>`).join("")}</div><div class="tyd" id="ptyd"></div>`;
     const tys = [...feed.querySelectorAll(".ty")];
     for (let k = 0; k < TYPES.length; k++) {
       tys.forEach((el, j) => el.classList.toggle("on", j === k));
